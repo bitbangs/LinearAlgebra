@@ -66,7 +66,12 @@ namespace LinearAlgebra
 			return dot;
 		}
 
-		//cross product
-
+		//opengl needs access
+		size_t GetSizeInBytes() const {
+			return size * sizeof T;
+		}
+		const T* GetPointerToData() const {
+			return elements.get();
+		}
 	};
 }

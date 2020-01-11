@@ -11,37 +11,28 @@ namespace LinearAlgebra
 	class Matrix
 	{
 	private:
-		size_t size;
+		size_t cols;
+		size_t rows;
 		std::unique_ptr<T[]> elements;
 	public:
-		Matrix(size_t size) :
-			size(size),
-			elements(std::make_unique<T[]>(size * size))
+		Matrix(size_t cols, size_t rows) :
+			cols(cols),
+			rows(rows),
+			elements(std::make_unique<T[]>(cols * rows))
 		{
-			if (size < 2 || size > 4) {
-				throw std::runtime_error("size of matrix must be 2x2, 3x3, or 4x4");
-			}
-			for (size_t ii = 0; ii < size; ++ii) {
-				for (size_t jj = 0; jj < size; ++jj) {
-					elements[(ii * size) + jj] = (T)0;
+			for (size_t ii = 0; ii < cols; ++ii) {
+				for (size_t jj = 0; jj < rows; ++jj) {
+					elements[(ii * cols) + jj] = (T)0;
 				}
 			}
 		}
-		Matrix(std::initializer_list<T> list) :
+		Matrix(size_t cols, size_t rows, std::initializer_list<T> list) :
+			cols(cols),
+			rows(rows),
 			elements(std::make_unique<T[]>(list.size()))
 		{
-			switch (list.size()) {
-			case 4:
-				size = 2;
-				break;
-			case 9:
-				size = 3;
-				break;
-			case 16:
-				size = 4;
-				break;
-			default:
-				throw std::runtime_error("size of matrix must be 2x2, 3x3, or 4x4");
+			if (cols * rows != list.size()) {
+				throw std::runtime_error("cols and rows passed to Matrix constructor do not match size of initializer list");
 			}
 			for (size_t ii = 0; ii < list.size(); ++ii) {
 				elements[ii] = *(list.begin() + ii);
@@ -50,10 +41,10 @@ namespace LinearAlgebra
 
 		//equality
 		bool operator==(const Matrix<T>& other) const {
-			if (size != other.size) {
+			if (cols != other.cols || rows != other.rows) {
 				return false;
 			}
-			for (size_t ii = 0; ii < size * size; ++ii) {
+			for (size_t ii = 0; ii < cols * rows; ++ii) {
 				if (elements[ii] != other.elements[ii]) {
 					return false;
 				}
@@ -66,16 +57,15 @@ namespace LinearAlgebra
 
 		//multiply
 		Matrix<T> operator*(const Matrix<T>& right) const {
-			if (size != right.size) {
+			if (cols != right.rows) {
 				throw std::runtime_error("cannot multiply matrices of different size");
 			}
-			Matrix<T> result(size);
-			for (size_t ii = 0; ii < size; ++ii) { //row
-				for (size_t jj = 0; jj < size; ++jj) { //column
-					for (size_t kk = 0; kk < size; ++kk) {
-						result.elements[ii + (jj * size)] +=
-							elements[ii + (kk * size)] *
-							right.elements[(jj * size) + kk];
+			Matrix<T> result(cols, right.rows);
+			for (size_t ii = 0; ii < right.rows; ++ii) { //row
+				for (size_t jj = 0; jj < cols; ++jj) { //column
+					for (size_t kk = 0; kk < cols; ++kk) { //number of sums for each element
+						result.elements[ii + (jj * cols)] +=
+							elements[ii + (kk * rows)] * right.elements[(jj * right.cols) + kk]; //don't think the scales are correct
 					}
 				}
 			}
@@ -84,7 +74,7 @@ namespace LinearAlgebra
 
 		//opengl needs access
 		size_t GetSizeInBytes() const {
-			return size * size * sizeof T;
+			return cols * rows * sizeof T;
 		}
 		const T* GetPointerToData() const {
 			return elements.get();
