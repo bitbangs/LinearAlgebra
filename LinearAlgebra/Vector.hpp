@@ -45,6 +45,22 @@ namespace LinearAlgebra
 			return !(*this == other);
 		}
 
+		//diff
+		Vector<T> operator-(const Vector<T>& other) const {
+			if (size != other.size) {
+				throw std::runtime_error("in LinearAlgebra::Vector::operator-(...), vector size mismatch");
+			}
+			Vector<T> result(size);
+			for (size_t ii = 0; ii < size; ++ii) {
+				result.elements[ii] = elements[ii] - other.elements[ii];
+			}
+			return result;
+		}
+		Vector<T>& operator-=(const Vector<T> other) {
+			*this = *this - other;
+			return *this;
+		}
+
 		//sum of all elements
 		T Sum() const {
 			T sum = 0;
@@ -66,12 +82,24 @@ namespace LinearAlgebra
 			return dot;
 		}
 
+		//cross product
+		/*Vector<T> Cross(const Vector<T>& other) const {
+			if (size != other.size) {
+				throw std::runtime_error("in LinearAlgebra::Vector::Cross(...), vector size mismatch");
+			}
+			Vector<T> cross(size);
+			for (size_t ii = 0; ii < size; ++ii) {
+				dot += elements[ii] * other.elements[ii];
+			}
+			return cross;
+		}*/
+
 		//opengl needs access
-		size_t GetSizeInBytes() const {
+		/*size_t GetSizeInBytes() const {
 			return size * sizeof T;
 		}
 		const T* GetPointerToData() const {
 			return elements.get();
-		}
+		}*/
 	};
 }

@@ -71,13 +71,19 @@ namespace LinearAlgebra
 			}
 			return result;
 		}
+		Matrix<T>& operator*=(const Matrix<T>& right) {
+			*this = *this * right;
+			return *this;
+		}
 
-		//opengl needs access
+		//opengl needs access to low level
 		size_t GetSizeInBytes() const {
 			return cols * rows * sizeof T;
 		}
 		const T* GetPointerToData() const {
 			return elements.get();
 		}
+
+		//need to provide read-only element access
 	};
 }

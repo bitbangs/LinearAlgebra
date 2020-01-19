@@ -48,3 +48,10 @@ TEST(TestVector, TestDotReturnsCorrectValue) {
     LinearAlgebra::Vector<int> vec2({ 1, 2, 3 });
     EXPECT_EQ(11, vec1.Dot(vec2));
 }
+
+TEST(TestVector, TestDiffReturnsCorrectVector) {
+    LinearAlgebra::Vector<int> vec1({ 3, 1, 2 });
+    LinearAlgebra::Vector<int> vec2({ 1, 2, 3 });
+    LinearAlgebra::Vector<int> vec3({ 2, -1, -1});
+    EXPECT_EQ(vec3, vec1 - vec2);
+}
