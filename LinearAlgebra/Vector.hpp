@@ -14,19 +14,24 @@ namespace LinearAlgebra
 	private:
 		size_t size;
 		std::unique_ptr<T[]> elements;
+		T mag;
 	public:
 		Vector() = delete;
 		Vector(size_t size) :
 			size(size),
-			elements(std::make_unique<T[]>(size))
+			elements(std::make_unique<T[]>(size)),
+			mag(0)
 		{}
 		Vector(std::initializer_list<T> list) :
 			size(list.size()),
-			elements(std::make_unique<T[]>(list.size()))
+			elements(std::make_unique<T[]>(list.size())),
+			mag(0)
 		{
 			for (size_t ii = 0; ii < list.size(); ++ii) {
 				elements[ii] = *(list.begin() + ii);
+				mag += *(list.begin() + ii);
 			}
+			mag = (T)std::sqrt(mag);
 		}
 
 		//equality
@@ -61,6 +66,18 @@ namespace LinearAlgebra
 			return *this;
 		}
 
+		//access
+		const T& operator[](size_t idx) const {
+			return elements[idx];
+		}
+
+		//scale
+		void Scale(T factor) {
+			for (size_t ii = 0; ii < size; ++ii) {
+				elements[ii] *= factor;
+			}
+		}
+
 		//sum of all elements
 		T Sum() const {
 			T sum = 0;
@@ -68,6 +85,15 @@ namespace LinearAlgebra
 				sum += elements[ii];
 			}
 			return sum;
+		}
+
+		//normalize
+		Vector<T> Normalize() const {
+			Vector<T> normal(size);
+			for (size_t ii = 0; ii < size; ++ii) {
+				normal.elements[ii] = ii / mag;
+			}
+			return normal;
 		}
 
 		//dot product
