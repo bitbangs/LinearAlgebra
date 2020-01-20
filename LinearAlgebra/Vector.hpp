@@ -24,12 +24,11 @@ namespace LinearAlgebra
 		{}
 		Vector(std::initializer_list<T> list) :
 			size(list.size()),
-			elements(std::make_unique<T[]>(list.size())),
-			mag(0)
+			elements(std::make_unique<T[]>(list.size()))
 		{
 			for (size_t ii = 0; ii < list.size(); ++ii) {
 				elements[ii] = *(list.begin() + ii);
-				mag += *(list.begin() + ii);
+				mag += *(list.begin() + ii) * *(list.begin() + ii);
 			}
 			mag = (T)std::sqrt(mag);
 		}
@@ -57,8 +56,11 @@ namespace LinearAlgebra
 			}
 			Vector<T> result(size);
 			for (size_t ii = 0; ii < size; ++ii) {
-				result.elements[ii] = elements[ii] - other.elements[ii];
+				T diff = elements[ii] - other.elements[ii];
+				result.elements[ii] = diff;
+				result.mag += diff * diff;
 			}
+			result.mag = (T)std::sqrt(result.mag);
 			return result;
 		}
 		Vector<T>& operator-=(const Vector<T> other) {
@@ -91,8 +93,9 @@ namespace LinearAlgebra
 		Vector<T> Normalize() const {
 			Vector<T> normal(size);
 			for (size_t ii = 0; ii < size; ++ii) {
-				normal.elements[ii] = ii / mag;
+				normal.elements[ii] = elements[ii] / mag;
 			}
+			normal.mag = (T)1;
 			return normal;
 		}
 
