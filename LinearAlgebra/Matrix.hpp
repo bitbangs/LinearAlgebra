@@ -1,6 +1,7 @@
 #pragma once
 
 #include <algorithm>
+#include <cmath>
 #include <exception>
 #include <initializer_list>
 #include <memory>

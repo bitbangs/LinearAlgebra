@@ -1,9 +1,11 @@
 #pragma once
 
 #include <algorithm>
+#include <cmath>
 #include <exception>
 #include <initializer_list>
 #include <memory>
+#include <stdexcept>
 #include <type_traits>
 
 namespace LinearAlgebra
