@@ -100,10 +100,12 @@ namespace LinearAlgebra
 		}
 
 		//scale each element by the same factor
-		void Scale(T factor) {
+		Vector<T> Scale(T factor) {
+			Vector<T> result(size);
 			for (size_t ii = 0; ii < size; ++ii) {
-				elements[ii] *= factor;
+				result.elements[ii] = elements[ii] * factor;
 			}
+			return result;
 		}
 
 		//scale each element by a vector of the same length; element by element

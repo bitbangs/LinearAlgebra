@@ -82,8 +82,7 @@ TEST(TestVector, TestDiffAssignReturnsCorrectVector) {
 TEST(TestVector, TestScalarScaleMutatesVector) {
     LinearAlgebra::Vector<int> vec1({ 1, 2, 3, 4, -3, -2, -1 });
     LinearAlgebra::Vector<int> vec2({ 5, 10, 15, 20, -15, -10, -5 });
-    vec1.Scale(5);
-    EXPECT_EQ(vec2, vec1);
+    EXPECT_EQ(vec2, vec1.Scale(5));
 }
 
 TEST(TestVector, TestVectorScaleReturnsCorrectVector) {
