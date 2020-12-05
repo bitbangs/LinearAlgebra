@@ -22,17 +22,22 @@ namespace LinearAlgebra
 		Vector(size_t size) :
 			size(size),
 			elements(std::make_unique<T[]>(size)),
-			mag(0)
+			mag(T(0))
 		{}
 		Vector(std::initializer_list<T> list) :
 			size(list.size()),
-			elements(std::make_unique<T[]>(list.size()))
+			elements(std::make_unique<T[]>(list.size())),
+			mag(T(0))
 		{
 			for (size_t ii = 0; ii < list.size(); ++ii) {
 				elements[ii] = *(list.begin() + ii);
 				mag += *(list.begin() + ii) * *(list.begin() + ii);
 			}
 			mag = (T)std::sqrt(mag);
+		}
+
+		T const GetMagnitude() const {
+			return mag;
 		}
 
 		//equality
@@ -51,6 +56,25 @@ namespace LinearAlgebra
 			return !(*this == other);
 		}
 
+		//add
+		Vector<T> operator+(const Vector<T>& other) const {
+			if (size != other.size) {
+				throw std::runtime_error("in LinearAlgebra::Vector::operator-(...), vector size mismatch");
+			}
+			Vector<T> result(size);
+			for (size_t ii = 0; ii < size; ++ii) {
+				T sum = elements[ii] + other.elements[ii];
+				result.elements[ii] = sum;
+				result.mag += sum * sum;
+			}
+			result.mag = (T)std::sqrt(result.mag);
+			return result;
+		}
+		Vector<T>& operator+=(const Vector<T>& other) {
+			*this = *this + other;
+			return *this;
+		}
+
 		//diff
 		Vector<T> operator-(const Vector<T>& other) const {
 			if (size != other.size) {
@@ -65,7 +89,7 @@ namespace LinearAlgebra
 			result.mag = (T)std::sqrt(result.mag);
 			return result;
 		}
-		Vector<T>& operator-=(const Vector<T> other) {
+		Vector<T>& operator-=(const Vector<T>& other) {
 			*this = *this - other;
 			return *this;
 		}
@@ -75,16 +99,35 @@ namespace LinearAlgebra
 			return elements[idx];
 		}
 
-		//scale
+		//scale each element by the same factor
 		void Scale(T factor) {
 			for (size_t ii = 0; ii < size; ++ii) {
 				elements[ii] *= factor;
 			}
 		}
 
+		//scale each element by a vector of the same length; element by element
+		Vector<T> operator*(const Vector<T>& other) const {
+			if (size != other.size) {
+				throw std::runtime_error("in LinearAlgebra::Vector::operator-(...), vector size mismatch");
+			}
+			Vector<T> result(size);
+			for (size_t ii = 0; ii < size; ++ii) {
+				T prod = elements[ii] * other.elements[ii];
+				result.elements[ii] = prod;
+				result.mag += prod * prod;
+			}
+			result.mag = (T)std::sqrt(result.mag);
+			return result;
+		}
+		Vector<T>& operator*=(const Vector<T>& other) {
+			*this = *this * other;
+			return *this;
+		}
+
 		//sum of all elements
 		T Sum() const {
-			T sum = 0;
+			T sum = (T)0;
 			for (size_t ii = 0; ii < size; ++ii) {
 				sum += elements[ii];
 			}
